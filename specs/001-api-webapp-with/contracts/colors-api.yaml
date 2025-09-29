@@ -1,0 +1,316 @@
+openapi: 3.0.3
+info:
+  title: Color Management API
+  description: |
+    A REST API for managing a collection of colors with support for retrieving all colors, 
+    fetching specific colors, getting random color suggestions, and adding/updating colors.
+    
+    ## Features
+    - Retrieve all colors in the collection
+    - Get specific colors by ID
+    - Get random color suggestions
+    - Add or update colors
+    - Interactive API documentation
+    
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://localhost:5001
+    description: Development server (HTTPS)
+  - url: http://localhost:5000
+    description: Development server (HTTP)
+
+paths:
+  /api/colors:
+    get:
+      summary: Get all colors
+      description: Retrieves the complete collection of available colors
+      operationId: getAllColors
+      tags:
+        - Colors
+      responses:
+        '200':
+          description: Successfully retrieved all colors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ColorResponse'
+              examples:
+                empty_collection:
+                  summary: Empty color collection
+                  value: []
+                with_colors:
+                  summary: Collection with colors
+                  value:
+                    - id: "primary-red"
+                      name: "Primary Red"
+                      hexValue: "#FF0000"
+                      createdAt: "2025-09-29T10:30:00Z"
+                      updatedAt: "2025-09-29T10:30:00Z"
+                    - id: "ocean-blue"
+                      name: "Ocean Blue"
+                      hexValue: "#3498DB"
+                      createdAt: "2025-09-29T10:35:00Z"
+                      updatedAt: "2025-09-29T10:35:00Z"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /api/colors/{id}:
+    get:
+      summary: Get color by ID
+      description: Retrieves a specific color by its unique identifier
+      operationId: getColorById
+      tags:
+        - Colors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier of the color
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9\-]+$'
+            maxLength: 50
+          example: "primary-red"
+      responses:
+        '200':
+          description: Successfully retrieved the color
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColorResponse'
+              example:
+                id: "primary-red"
+                name: "Primary Red"
+                hexValue: "#FF0000"
+                createdAt: "2025-09-29T10:30:00Z"
+                updatedAt: "2025-09-29T10:30:00Z"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      summary: Set color (create or update)
+      description: |
+        Creates a new color or updates an existing color. Uses PUT semantics:
+        - If color ID exists: updates the existing color
+        - If color ID doesn't exist: creates a new color
+      operationId: setColor
+      tags:
+        - Colors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the color
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9\-]+$'
+            maxLength: 50
+          example: "primary-red"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColorRequest'
+            example:
+              name: "Primary Red"
+              hexValue: "#FF0000"
+      responses:
+        '200':
+          description: Color updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColorResponse'
+        '201':
+          description: Color created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColorResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /api/colors/random:
+    get:
+      summary: Get random color
+      description: Returns a randomly selected color from the available collection
+      operationId: getRandomColor
+      tags:
+        - Colors
+      responses:
+        '200':
+          description: Successfully retrieved a random color
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColorResponse'
+              example:
+                id: "ocean-blue"
+                name: "Ocean Blue"
+                hexValue: "#3498DB"
+                createdAt: "2025-09-29T10:35:00Z"
+                updatedAt: "2025-09-29T10:35:00Z"
+        '404':
+          description: No colors available in the collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "NotFound"
+                message: "No colors available in the collection"
+                correlationId: "12345678-1234-1234-1234-123456789012"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the API service
+      operationId: healthCheck
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-09-29T10:30:00Z"
+
+components:
+  schemas:
+    ColorRequest:
+      type: object
+      required:
+        - name
+        - hexValue
+      properties:
+        name:
+          type: string
+          description: Human-readable display name for the color
+          maxLength: 100
+          minLength: 1
+          example: "Primary Red"
+        hexValue:
+          type: string
+          description: Hexadecimal color value
+          pattern: '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+          example: "#FF0000"
+
+    ColorResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the color
+          maxLength: 50
+          example: "primary-red"
+        name:
+          type: string
+          description: Human-readable display name for the color
+          maxLength: 100
+          example: "Primary Red"
+        hexValue:
+          type: string
+          description: Hexadecimal color value
+          pattern: '^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$'
+          example: "#FF0000"
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the color was created
+          example: "2025-09-29T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the color was last updated
+          example: "2025-09-29T10:30:00Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type/category
+          example: "ValidationError"
+        message:
+          type: string
+          description: Human-readable error description
+          example: "Invalid hex color format"
+        correlationId:
+          type: string
+          description: Unique identifier for request tracing
+          example: "12345678-1234-1234-1234-123456789012"
+
+  responses:
+    BadRequest:
+      description: Invalid request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalid_hex:
+              summary: Invalid hex color format
+              value:
+                error: "ValidationError"
+                message: "Invalid hex color format. Expected format: #RRGGBB or #RGB"
+                correlationId: "12345678-1234-1234-1234-123456789012"
+            invalid_id:
+              summary: Invalid color ID format
+              value:
+                error: "ValidationError"
+                message: "Color ID must contain only alphanumeric characters and hyphens"
+                correlationId: "12345678-1234-1234-1234-123456789012"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "NotFound"
+            message: "Color with ID 'invalid-color' not found"
+            correlationId: "12345678-1234-1234-1234-123456789012"
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "InternalServerError"
+            message: "An unexpected error occurred"
+            correlationId: "12345678-1234-1234-1234-123456789012"
+
+tags:
+  - name: Colors
+    description: Color management operations
+  - name: System
+    description: System health and monitoring

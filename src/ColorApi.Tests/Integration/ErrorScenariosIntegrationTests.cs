@@ -1,0 +1,1 @@
+// Integration test stub: error scenarios (invalid hex, invalid id, malformed request)

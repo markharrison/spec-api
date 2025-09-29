@@ -1,0 +1,1 @@
+// Integration test stub: retrieve all colors (empty, populated)

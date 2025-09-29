@@ -1,0 +1,1 @@
+// Contract test stub for GET /api/colors/random

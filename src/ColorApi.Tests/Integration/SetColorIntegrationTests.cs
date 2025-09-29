@@ -1,0 +1,1 @@
+// Integration test stub: add/update color

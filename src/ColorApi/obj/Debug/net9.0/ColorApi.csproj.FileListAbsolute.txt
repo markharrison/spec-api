@@ -1,0 +1,8 @@
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.csproj.AssemblyReference.cache
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.AssemblyInfoInputs.cache
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.AssemblyInfo.cs
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.csproj.CoreCompileInputs.cache
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.MvcApplicationPartsAssemblyInfo.cs
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.MvcApplicationPartsAssemblyInfo.cache
+/workspaces/.devcontainer/src/ColorApi/obj/Debug/net9.0/ColorApi.sourcelink.json

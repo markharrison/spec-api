@@ -1,0 +1,1 @@
+// Integration test stub: get random color (empty, populated)

@@ -1,0 +1,1 @@
+// Integration test stub: retrieve color by id (found, not found)
